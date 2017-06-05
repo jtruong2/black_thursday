@@ -14,6 +14,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_retrieve_average_items_per_merchant
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -21,6 +22,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_retrieve_average_items_per_merchant_standard_deviation
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -28,6 +30,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_retrieve_merchants_with_high_item_count
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
     a = sa.merchants_with_high_item_count
@@ -36,6 +39,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_retrieve_average_item_price_for_merchant
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -44,6 +48,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_average_average_price_per_merchant
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -51,6 +56,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_retrieve_golden_items
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
     a = sa.golden_items
@@ -59,6 +65,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_average_invoices_per_merchant
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -66,6 +73,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_average_invoices_per_merchant_standard_deviation
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -73,6 +81,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_top_merchants_by_invoice_count
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
     a = sa.top_merchants_by_invoice_count
@@ -81,6 +90,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_bottom_merchants_by_invoice_count
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
     a = sa.bottom_merchants_by_invoice_count
@@ -89,6 +99,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_top_days_by_invoice_count
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -96,6 +107,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_invoice_status
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
