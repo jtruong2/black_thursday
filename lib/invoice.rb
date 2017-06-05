@@ -40,9 +40,9 @@ class Invoice
     @parent.parent.customers.find_by_id(customer_id)
   end
 
-  def is_paid_in_full?
-    a = @parent.parent.transactions.find_all_by_invoice_id(id)
-    a.
-  end
+  # def is_paid_in_full?
+  #   a = @parent.parent.transactions.find_all_by_invoice_id(id)
+  #   a.
+  # end
 
 end
