@@ -40,9 +40,25 @@ class Invoice
     @parent.parent.customers.find_by_id(customer_id)
   end
 
-  # def is_paid_in_full?
-  #   a = @parent.parent.transactions.find_all_by_invoice_id(id)
-  #   a.
-  # end
+  def is_paid_in_full?
+    a = @parent.parent.transactions.find_all_by_invoice_id(id)
+    b = a.map do |x|
+      x.result
+    end
+    b.include?("failed") ? false : true
+  end
+
+  def total
+    a = @parent.parent.invoice_items.find_all_by_invoice_id(id)
+    b = transactions
+    c = a.map do |x|
+      b.map do |y|
+        if y.result == "success"
+          x.unit_price
+        end
+      end
+    end
+    c.reduce(:+).compact[0]
+  end
 
 end
