@@ -22,16 +22,18 @@ class SalesAnalyst
   end
 
   def merchants_with_high_item_count
-    counts = Hash.new(0)
     x = []
     y = []
     a = item_count_per_merchant
     b = average_items_per_merchant_standard_deviation
     c = average_items_per_merchant
+    d = @parent.merchants.contents
     a.each do |k,v|
       y << k if v > b + c
     end
-    return y
+    y.map do |x|
+      d[x]
+    end
   end
 
   def average_item_price_for_merchant(id)
@@ -65,8 +67,8 @@ class SalesAnalyst
     golden = []
     a = average_average_price_per_merchant
     b = average_price_per_merchant_standard_deviation
-    x = @parent.items.contents.each do |k,v|
-      golden << k if v.unit_price.to_f > a + (b + b)
+    x = @parent.items.contents.values.each do |v|
+      golden << v if v.unit_price > (((b - a) * 2) - a)
     end
     return golden
   end
@@ -150,7 +152,7 @@ private
     end
     merchants.each do |x|
       a = average_item_price_for_merchant(x)
-      avg_prices << a.to_i
+      avg_prices << a.to_f
     end
     standard_deviation(avg_prices)
   end
@@ -162,7 +164,7 @@ private
     variance = arr.reduce(0.0) do |sum, element|
       sum + (element - mean)**2
     end / (arr.length - 1)
-    Math.sqrt(variance)
+    a = Math.sqrt(variance)
   end
 
   def item_count_per_merchant
@@ -242,7 +244,10 @@ private
       counts[id] += 1
     end
     return counts
-
   end
+
+  # def total_revenue_by_date(date)
+  #
+  # end
 
 end
