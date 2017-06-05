@@ -98,6 +98,7 @@ class SalesAnalyst
         final << k
       end
     end
+    binding.pry
     return final
   end
 

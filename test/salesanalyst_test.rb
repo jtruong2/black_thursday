@@ -81,7 +81,6 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_top_merchants_by_invoice_count
-    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
     a = sa.top_merchants_by_invoice_count
