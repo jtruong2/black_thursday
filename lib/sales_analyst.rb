@@ -157,18 +157,33 @@ class SalesAnalyst
   end
 
   def merchants_with_only_one_item
+    a = compile_items_by_merchant
+    b = count_items_by_merchant(a)
+    c = find_associated_merchant_instances(b)
+    return c
+  end
+
+  def compile_items_by_merchant
     h = {}
-    i = {}
-    j = []
     a = @parent.items.contents
     y = a.values.each do |x|
       b = @parent.items.find_all_by_merchant_id(x.merchant_id)
       h[x.merchant_id] = b
     end
-    h.each do |k,v|
+    return h
+  end
+
+  def count_items_by_merchant(hash)
+    i = {}
+    hash.each do |k,v|
       i[k] = v.count
     end
-    i.each do |k,v|
+    return i
+  end
+
+  def find_associated_merchant_instances(hash)
+    j = []
+    hash.each do |k,v|
       j<< k if v == 1
     end
     @revenue.find_merchant_instances(j)

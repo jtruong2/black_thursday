@@ -134,8 +134,8 @@ class SalesAnalystTest < Minitest::Test
   def test_merchants_with_only_one_item
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
-binding.pry
-    assert_equal 475, sa.merchants_with_only_one_item.length
+
+    assert_equal 243, sa.merchants_with_only_one_item.length
     assert_instance_of Merchant, sa.merchants_with_only_one_item[0]
   end
 
