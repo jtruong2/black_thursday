@@ -30,12 +30,12 @@ class Invoice
 
   def items
     a = @parent.parent.invoice_items.find_all_by_invoice_id(id)
-    # b = a.map do |x|
-    #   x.item_id
-    # end
-    # z = b.map do |x|
-    #   @parent.parent.items.find_by_id(x)
-    # end
+    b = a.map do |x|
+      x.item_id
+    end
+    z = b.map do |x|
+      @parent.parent.items.find_by_id(x)
+    end
   end
 
   def transactions
@@ -48,12 +48,12 @@ class Invoice
 
   def is_paid_in_full?
     b = transaction_status
-    b.all? {|x| x == "failed" || x == nil ? false : true }
+    b.any? {|x| x == "success" ? true : false }
   end
 
   def total
     if is_paid_in_full?
-      total_invoice_revenue(id)
+      a = total_invoice_revenue(id)
     end
   end
 
@@ -62,7 +62,7 @@ class Invoice
     list_of_transactions_for_this_invoice_id = []
     a.values.map do |v| #transactions contents
       if id == v.invoice_id
-        list_of_transactions_for_this_invoice_id << [v.invoice_id,v.result]
+        list_of_transactions_for_this_invoice_id << v.result
       end
     end
     return list_of_transactions_for_this_invoice_id
@@ -73,7 +73,7 @@ class Invoice
   # end
 
   def total_invoice_revenue(y)
-    invoice_item_contents = items
+    invoice_item_contents = @parent.parent.invoice_items.find_all_by_invoice_id(id)
     b = {}
     c = invoice_item_contents.find_all do |v|
       v.invoice_id == y[0]

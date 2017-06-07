@@ -73,6 +73,7 @@ class InvoiceTest < Minitest::Test
     ir =se.invoices
     inv = ir.contents
     tr =inv[1]
+    binding.pry
 
     assert_equal 21067.77, tr.total.to_f
   end
