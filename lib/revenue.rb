@@ -56,6 +56,26 @@ class Revenue
     d = c[1]
   end
 
+  def find_earners(x)
+    a = merchant_revenue
+    if x.class == Fixnum || x.class == Integer
+      b = a.shift(x)
+    else
+      b = a.shift(20)
+    end
+    find_merchant_instances(b)
+  end
+
+  def find_merchant_instances(arr)
+    final = []
+    arr.each do |x|
+      a = merchant_to_instance_conversion(x)
+      final << a
+    end
+    final
+  end
+
+
 private
 
   def date_convert(date)
@@ -70,10 +90,22 @@ private
     @parent.parent.invoices.contents
   end
 
+  def access_merchants
+    @parent.parent.merchants.contents
+  end
+
   def invoice_to_merchant_conversion(inv)
     access_invoices.values.each do |v|
       if v.id == inv
         return v.merchant_id
+      end
+    end
+  end
+
+  def merchant_to_instance_conversion(m_id)
+    access_merchants.values.find do |v|
+      if v.id == m_id
+        return v
       end
     end
   end

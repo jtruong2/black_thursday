@@ -116,9 +116,9 @@ class SalesAnalystTest < Minitest::Test
   def test_top_revenue_earners
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
-    expected = [12334407,12334185,12334333,12334346,12334471]
 
-    assert_equal expected, sa.top_revenue_earners(5)
+    assert_equal 5, sa.top_revenue_earners(5).length
     assert_equal 20, sa.top_revenue_earners("whatever").length
+    assert_instance_of Merchant, sa.top_revenue_earners(5)[0]
   end
 end

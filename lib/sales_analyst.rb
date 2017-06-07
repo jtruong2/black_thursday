@@ -148,13 +148,8 @@ class SalesAnalyst
   end
 
   def top_revenue_earners(x)
-    a = @revenue.merchant_revenue
-    if x.class == Fixnum || x.class == Integer
-      b = a.shift(x)
-    else
-      b = a.shift(20)
-    end
-    return b
+    @revenue.find_earners(x)
+
   end
 
 private
