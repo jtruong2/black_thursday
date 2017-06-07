@@ -157,13 +157,21 @@ class SalesAnalyst
   end
 
   def merchants_with_only_one_item
-    x = []
+    h = {}
+    i = {}
+    j = []
     a = @parent.items.contents
-    a.values.each do |v|
-      x << v.merchant_id unless x.include?(v.merchant_id)
+    y = a.values.each do |x|
+      b = @parent.items.find_all_by_merchant_id(x.merchant_id)
+      h[x.merchant_id] = b
     end
-    # c = b.uniq
-    @revenue.find_merchant_instances(x)
+    h.each do |k,v|
+      i[k] = v.count
+    end
+    i.each do |k,v|
+      j<< k if v == 1
+    end
+    @revenue.find_merchant_instances(j)
   end
 
   def merchants_with_only_one_item_registered_in_month(month_name)
