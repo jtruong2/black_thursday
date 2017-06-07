@@ -59,13 +59,22 @@ class InvoiceTest < Minitest::Test
     assert_equal "2014-07-01 00:00:00 -0600", ir.contents[15].updated_at.to_s
   end
 
-  def test_find_merchants_through_invoice
-    se = SalesEngine.from_csv(setup)
-    ir = se.invoices
-    inv = ir.contents
-    merch = inv[1]
+  # def test_find_merchants_through_invoice
+  #   se = SalesEngine.from_csv(setup)
+  #   ir = se.invoices
+  #   inv = ir.contents
+  #   merch = inv[1]
+  #
+  #   assert_equal nil, merch.merchant
+  # end
 
-    assert_equal nil, merch.merchant
+  def test_find_total
+    se = SalesEngine.from_csv({:items=>"./data/items.csv",:merchants => "./data/merchants.csv",:invoices =>"./data/invoices.csv",:invoice_items=>"./data/invoice_items.csv",:transactions=>"./data/transactions.csv",:customers=>"./data/customers.csv"})
+    ir =se.invoices
+    inv = ir.contents
+    tr =inv[1]
+
+    assert_equal 21067.77, tr.total.to_f
   end
 
 end
