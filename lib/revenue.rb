@@ -77,6 +77,16 @@ class Revenue
 
 private
 
+  # def whatever(inv)
+  #   invoice_link.contents.values.each do |k,v|
+  #     if v.invoice_id == inv
+  #
+  # end
+
+  def invoices_link
+    @parent.parent.invoices
+  end
+
   def date_convert(date)
    date.strftime "%Y-%m-%d"
   end

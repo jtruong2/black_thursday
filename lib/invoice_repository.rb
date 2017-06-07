@@ -25,6 +25,7 @@ class InvoiceRepository
 
   def all
     invoices = contents.map { |k,v| v }
+
   end
 
   def find_by_id(id)
