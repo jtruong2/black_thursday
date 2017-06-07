@@ -144,13 +144,39 @@ class SalesAnalyst
   end
 
   def total_revenue_by_date(date)
-    @revenue.revenue_by_date[date].to_f
+    @revenue.revenue_by_date[date]
   end
 
   def top_revenue_earners(x)
     @revenue.find_earners(x)
 
   end
+
+  def revenue_by_merchant(merchant_id)
+    @revenue.revenue_by_merchant_id[merchant_id]
+  end
+
+  def merchants_with_only_one_item
+    x = []
+    a = @parent.items.contents
+    a.values.each do |v|
+      x << v.merchant_id unless x.include?(v.merchant_id)
+    end
+    # c = b.uniq
+    @revenue.find_merchant_instances(x)
+  end
+
+  def merchants_with_only_one_item_registered_in_month(month_name)
+    by_month = {}
+    @parent.items.contents.values.each do |v|
+      if v.created_at.strftime("%B") == month_name
+        by_month[v.merchant_id] = v.created_at
+      end
+    end
+    @revenue.find_merchant_instances(by_month.keys)
+  end
+
+
 
 private
 

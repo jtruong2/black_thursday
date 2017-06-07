@@ -8,6 +8,7 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_it_exists
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -121,4 +122,30 @@ class SalesAnalystTest < Minitest::Test
     assert_equal 20, sa.top_revenue_earners("whatever").length
     assert_instance_of Merchant, sa.top_revenue_earners(5)[0]
   end
+
+  def test_revenue_by_merchant
+    se = SalesEngine.from_csv(setup)
+    sa = SalesAnalyst.new(se)
+
+    assert_equal 11767.41, sa.revenue_by_merchant(12335938).to_f
+    assert_instance_of BigDecimal, sa.revenue_by_merchant(12335938)
+  end
+
+  def test_merchants_with_only_one_item
+    skip
+    se = SalesEngine.from_csv(setup)
+    sa = SalesAnalyst.new(se)
+
+    assert_equal 475, sa.merchants_with_only_one_item.length
+    assert_instance_of Merchant, sa.merchants_with_only_one_item[0]
+  end
+
+  def test_merchants_with_only_one_item_registered_in_month
+    se = SalesEngine.from_csv(setup)
+    sa = SalesAnalyst.new(se)
+
+    assert_equal 475, sa.merchants_with_only_one_item_registered_in_month("February").length
+    assert_instance_of Merchant, sa.merchants_with_only_one_item_registered_in_month("January")[0]
+  end
+
 end

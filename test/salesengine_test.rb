@@ -15,7 +15,7 @@ class SalesEngineTest < Minitest::Test
 
   def test_it_exists
     se = SalesEngine.from_csv(setup)
-
+# binding.pry
     assert_instance_of SalesEngine, se
   end
 

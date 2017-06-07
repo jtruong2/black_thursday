@@ -43,7 +43,6 @@ class Revenue
     hash.each do |k,v|
       a = invoice_to_merchant_conversion(k)
       @revenue_by_merchant_id[a] = v
-      # binding.pry
     end
   end
 
