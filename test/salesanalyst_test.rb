@@ -116,6 +116,7 @@ class SalesAnalystTest < Minitest::Test
   def test_top_revenue_earners
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
+    sa.revenue.merchant_revenue
 
     assert_equal 5, sa.top_revenue_earners(5).length
     assert_equal 20, sa.top_revenue_earners("whatever").length
@@ -126,7 +127,7 @@ class SalesAnalystTest < Minitest::Test
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
-    assert_equal 11767.41, sa.revenue_by_merchant(12335938).to_f
+    assert_equal 18631.46, sa.revenue_by_merchant(12335938).to_f
     assert_instance_of BigDecimal, sa.revenue_by_merchant(12335938)
   end
 
