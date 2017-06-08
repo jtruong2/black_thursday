@@ -166,7 +166,7 @@ class SalesAnalyst
   def compile_items_by_merchant
     h = {}
     a = @parent.items.contents
-    y = a.values.each do |x|
+    a.values.each do |x|
       b = @parent.items.find_all_by_merchant_id(x.merchant_id)
       h[x.merchant_id] = b
     end
@@ -188,18 +188,6 @@ class SalesAnalyst
     end
     @revenue.find_merchant_instances(j)
   end
-
-  def merchants_with_only_one_item_registered_in_month(month_name)
-    by_month = {}
-    @parent.items.contents.values.each do |v|
-      if v.created_at.strftime("%B") == month_name
-        by_month[v.merchant_id] = v.created_at
-      end
-    end
-    @revenue.find_merchant_instances(by_month.keys)
-  end
-
-
 
 private
 
