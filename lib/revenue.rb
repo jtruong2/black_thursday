@@ -27,13 +27,13 @@ class Revenue
 
   def extract_merchants_and_revenues
     invoice_id_and_sales = {}
-    a = access_invoice_items.values.each do |v|
-      a = v.invoice_id
-      b = v.unit_price * v.quantity
-      if invoice_id_and_sales.has_key?(v.invoice_id)
-        invoice_id_and_sales[a] += (v.unit_price * v.quantity)
+    a = access_invoices.values.map do |inv|
+      invoice_total = inv.total
+      next if invoice_total == nil
+      if invoice_id_and_sales.has_key?(inv.id)
+        invoice_id_and_sales[inv.id] += invoice_total
       else
-        invoice_id_and_sales[a] = b
+        invoice_id_and_sales[inv.id] = invoice_total
       end
     end
     replace_invoice_id_with_merchant_id(invoice_id_and_sales)
@@ -43,7 +43,6 @@ class Revenue
     hash.each do |k,v|
       a = invoice_to_merchant_conversion(k)
       @revenue_by_merchant_id[a] = v
-      # binding.pry
     end
   end
 
@@ -54,6 +53,7 @@ class Revenue
     b.reverse!
     c = b.transpose
     d = c[1]
+    binding.pry
   end
 
   def find_earners(x)
@@ -77,12 +77,6 @@ class Revenue
 
 
 private
-
-  # def whatever(inv)
-  #   invoice_link.contents.values.each do |k,v|
-  #     if v.invoice_id == inv
-  #
-  # end
 
   def invoices_link
     @parent.parent.invoices
