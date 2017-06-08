@@ -13,7 +13,7 @@ class Invoice
     @id          = data[:id].to_i
     @customer_id = data[:customer_id].to_i
     @merchant_id = data[:merchant_id].to_i
-    @status      = data[:status]
+    @status      = data[:status].to_sym
     @created_at  = date_convert(data[:created_at])
     @updated_at  = date_convert(data[:updated_at])
     @parent      = parent
@@ -21,7 +21,7 @@ class Invoice
 
   def date_convert(from_file)
     date = from_file.split("-")
-    time = Time.new(date[0], date[1], date[2])
+    Time.new(date[0], date[1], date[2])
   end
 
   def merchant
@@ -29,7 +29,13 @@ class Invoice
   end
 
   def items
-    @parent.parent.items.find_all_by_merchant_id(merchant_id)
+    a = @parent.parent.invoice_items.find_all_by_invoice_id(id)
+    b = a.map do |x|
+      x.item_id
+    end
+    b.map do |x|
+      @parent.parent.items.find_by_id(x)
+    end
   end
 
   def transactions
@@ -41,24 +47,35 @@ class Invoice
   end
 
   def is_paid_in_full?
-    a = @parent.parent.transactions.find_all_by_invoice_id(id)
-    b = a.map do |x|
-      x.result
-    end
-    b.include?("failed") ? false : true
+    b = transaction_status
+    b.any? {|x| x == "success" ? true : false }
   end
 
   def total
-    a = @parent.parent.invoice_items.find_all_by_invoice_id(id)
-    b = transactions
-    c = a.map do |x|
-      b.map do |y|
-        if y.result == "success"
-          x.unit_price
-        end
-      end
+    if is_paid_in_full?
+      total_invoice_revenue(id)
     end
-    c.reduce(:+).compact[0]
   end
 
+  def transaction_status
+    a = @parent.parent.transactions.contents
+    list_of_transactions_for_this_invoice_id = []
+    a.values.map do |v|
+      if id == v.invoice_id
+        list_of_transactions_for_this_invoice_id << v.result
+      end
+    end
+    return list_of_transactions_for_this_invoice_id
+  end
+
+  def total_invoice_revenue(inv_id)
+    invoice_item_contents = @parent.parent.invoice_items.all
+    b = []
+    invoice_item_contents.map do |inv_item|
+      if inv_id == inv_item.invoice_id
+        b << (inv_item.unit_price * inv_item.quantity)
+      end
+    end
+    b.reduce(:+)
+  end
 end

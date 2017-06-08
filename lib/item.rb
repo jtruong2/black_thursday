@@ -24,7 +24,7 @@ class Item
 
   def date_convert(from_file)
     date = from_file.split(/[-," ",:]/)
-    time = Time.utc(date[0], date[1], date[2], date[3], date[4], date[5])
+    Time.utc(date[0], date[1], date[2], date[3], date[4], date[5])
   end
 
   def merchant

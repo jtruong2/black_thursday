@@ -1,9 +1,13 @@
 require 'pry'
+require_relative 'revenue'
 
 class SalesAnalyst
+  attr_reader :parent,
+              :revenue
 
   def initialize(parent)
     @parent = parent
+    @revenue = Revenue.new(self)
   end
 
   def average_items_per_merchant
@@ -22,14 +26,22 @@ class SalesAnalyst
   end
 
   def merchants_with_high_item_count
+<<<<<<< HEAD
     x = []
+=======
+>>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     y = []
     a = item_count_per_merchant
     b = average_items_per_merchant_standard_deviation
     c = average_items_per_merchant
     d = @parent.merchants.contents
+<<<<<<< HEAD
     a.each do |k,v|
       y << k if v > b + c
+=======
+    a.find_all do |k,v|
+      y << d[k] if v > b + c
+>>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     end
     y.map do |x|
       d[x]
@@ -65,10 +77,19 @@ class SalesAnalyst
 
   def golden_items
     golden = []
+<<<<<<< HEAD
     a = average_average_price_per_merchant
     b = average_price_per_merchant_standard_deviation
     x = @parent.items.contents.values.each do |v|
       golden << v if v.unit_price > (((b - a) * 2) - a)
+=======
+    a = @parent.items.contents.values.map { |v| v.unit_price}
+    b = a.reduce(:+)/a.count
+    c = average_price_per_merchant_standard_deviation
+    d = @parent.items.contents
+    @parent.items.contents.map do |k,v|
+      golden << d[k] if v.unit_price.to_f > b + (c + c)
+>>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     end
     return golden
   end
@@ -92,11 +113,10 @@ class SalesAnalyst
     a = average_invoices_per_merchant
     b = average_invoices_per_merchant_standard_deviation
     c = invoice_count_per_merchant
+    d = @parent.merchants.contents
     final = []
-    c.each do |k,v|
-      if v > a + (b + b)
-        final << k
-      end
+    c.find_all do |k,v|
+      final << d[k] if v > a + (b + b)
     end
     return final
   end
@@ -105,11 +125,10 @@ class SalesAnalyst
     a = average_invoices_per_merchant
     b = average_invoices_per_merchant_standard_deviation
     c = invoice_count_per_merchant
+    d = @parent.merchants.contents
     final = []
     c.each do |k,v|
-      if v < a - (b + b)
-        final << k
-      end
+      final << d[k] if v < a - (b + b)
     end
     return final
   end
@@ -140,21 +159,63 @@ class SalesAnalyst
     percentage.round(2)
   end
 
-private
+  def total_revenue_by_date(date)
+    @revenue.revenue_by_date[date]
+  end
 
-  def average_price_per_merchant_standard_deviation
-    merchants = []
-    avg_prices = []
-    @parent.items.contents.each do |k,v|
-      if !merchants.include?(v.merchant_id)
-        merchants << v.merchant_id
-      end
+  def top_revenue_earners(x)
+    @revenue.find_earners(x)
+
+  end
+
+  def revenue_by_merchant(merchant_id)
+    @revenue.revenue_by_merchant_id[merchant_id]
+  end
+
+  def merchants_with_only_one_item
+    a = compile_items_by_merchant
+    b = count_items_by_merchant(a)
+    c = find_associated_merchant_instances(b)
+    return c
+  end
+
+  def compile_items_by_merchant
+    h = {}
+    a = @parent.items.contents
+    a.values.each do |x|
+      b = @parent.items.find_all_by_merchant_id(x.merchant_id)
+      h[x.merchant_id] = b
     end
+<<<<<<< HEAD
     merchants.each do |x|
       a = average_item_price_for_merchant(x)
       avg_prices << a.to_f
+=======
+    return h
+  end
+
+  def count_items_by_merchant(hash)
+    i = {}
+    hash.each do |k,v|
+      i[k] = v.count
+>>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     end
-    standard_deviation(avg_prices)
+    return i
+  end
+
+  def find_associated_merchant_instances(hash)
+    j = []
+    hash.each do |k,v|
+      j<< k if v == 1
+    end
+    @revenue.find_merchant_instances(j)
+  end
+
+private
+
+  def average_price_per_merchant_standard_deviation
+    a = @parent.items.contents.values.map { |v| v.unit_price}
+    standard_deviation(a)
   end
 
   def standard_deviation(arr)
@@ -192,23 +253,18 @@ private
   end
 
   def days_invoice_created_at_count
-    counts = Hash.new(0)
     x = []
     @parent.invoices.contents.each do |k,v|
       x << v.created_at
     end
-    x.each do |id|
-      counts[id] += 1
-    end
-    return counts
+    return x
   end
 
   def invoices_created_per_date
     counts = Hash.new(0)
     a = days_invoice_created_at_count
-    days = []
-    a.each do |k,v|
-      days << k.strftime("%A")
+    days = a.map do |x|
+      x.strftime("%A")
     end
     days.each do |day|
       counts[day] += 1
