@@ -19,7 +19,7 @@ class Customer
 
   def date_convert(file_data)
     date = file_data.split(/[-," ",:]/)
-    time = Time.utc(date[0], date[1], date[2], date[3], date[4],
+    Time.utc(date[0], date[1], date[2], date[3], date[4],
                     date[5], date[6], date[7])
   end
 
