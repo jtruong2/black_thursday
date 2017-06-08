@@ -10,13 +10,6 @@ class InvoiceRepositoryTest < Minitest::Test
     assert_instance_of InvoiceRepository, ir
   end
 
-  def test_return_all_instances
-    skip #need to figure out how to gather verification data
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
-
-    assert_equal x, x
-  end
-
   def test_return_instance_with_find_by_id_good_id
     ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
     actual = ir.find_by_id(30).id

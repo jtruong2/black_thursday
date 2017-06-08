@@ -26,8 +26,6 @@ class SalesAnalyst
   end
 
   def merchants_with_high_item_count
-    counts = Hash.new(0)
-    x = []
     y = []
     a = item_count_per_merchant
     b = average_items_per_merchant_standard_deviation

@@ -8,7 +8,6 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_it_exists
-    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 

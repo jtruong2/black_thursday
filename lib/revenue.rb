@@ -27,7 +27,7 @@ class Revenue
 
   def extract_merchants_and_revenues
     invoice_id_and_sales = {}
-    a = access_invoices.values.map do |inv|
+    access_invoices.values.map do |inv|
       invoice_total = inv.total
       next if invoice_total == nil
       if invoice_id_and_sales.has_key?(inv.id)
@@ -52,8 +52,7 @@ class Revenue
     b.sort!
     b.reverse!
     c = b.transpose
-    d = c[1]
-    binding.pry
+    c[1]
   end
 
   def find_earners(x)

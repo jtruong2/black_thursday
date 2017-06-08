@@ -24,7 +24,7 @@ class MerchantRepository
   end
 
   def all
-    merchants = contents.map { |k,v| v }
+    contents.map { |k,v| v }
   end
 
   def find_by_id(id_number)

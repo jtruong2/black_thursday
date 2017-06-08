@@ -21,7 +21,7 @@ class Invoice
 
   def date_convert(from_file)
     date = from_file.split("-")
-    time = Time.new(date[0], date[1], date[2])
+    Time.new(date[0], date[1], date[2])
   end
 
   def merchant
@@ -33,7 +33,7 @@ class Invoice
     b = a.map do |x|
       x.item_id
     end
-    z = b.map do |x|
+    b.map do |x|
       @parent.parent.items.find_by_id(x)
     end
   end
@@ -53,7 +53,7 @@ class Invoice
 
   def total
     if is_paid_in_full?
-      a = total_invoice_revenue(id)
+      total_invoice_revenue(id)
     end
   end
 
@@ -76,6 +76,6 @@ class Invoice
         b << (inv_item.unit_price * inv_item.quantity).to_f
       end
     end
-    return b.reduce(:+)
+    b.reduce(:+)
   end
 end
