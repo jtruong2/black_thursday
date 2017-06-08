@@ -71,9 +71,9 @@ class Invoice
   def total_invoice_revenue(inv_id)
     invoice_item_contents = @parent.parent.invoice_items.all
     b = []
-    d = invoice_item_contents.map do |inv_item|
+    invoice_item_contents.map do |inv_item|
       if inv_id == inv_item.invoice_id
-        b << (inv_item.unit_price * inv_item.quantity).to_f
+        b << (inv_item.unit_price * inv_item.quantity)
       end
     end
     b.reduce(:+)

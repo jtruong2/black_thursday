@@ -29,7 +29,7 @@ class InvoiceRepository
 
   def find_by_id(id)
     i = contents.keys.find { |k| k == id }
-    x = contents[i]
+    contents[i]
   end
 
   def find_all_by_customer_id(c_id)
