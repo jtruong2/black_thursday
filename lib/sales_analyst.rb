@@ -144,12 +144,49 @@ class SalesAnalyst
   end
 
   def total_revenue_by_date(date)
-    @revenue.revenue_by_date[date].to_f
+    @revenue.revenue_by_date[date]
   end
 
   def top_revenue_earners(x)
     @revenue.find_earners(x)
 
+  end
+
+  def revenue_by_merchant(merchant_id)
+    @revenue.revenue_by_merchant_id[merchant_id]
+  end
+
+  def merchants_with_only_one_item
+    a = compile_items_by_merchant
+    b = count_items_by_merchant(a)
+    c = find_associated_merchant_instances(b)
+    return c
+  end
+
+  def compile_items_by_merchant
+    h = {}
+    a = @parent.items.contents
+    a.values.each do |x|
+      b = @parent.items.find_all_by_merchant_id(x.merchant_id)
+      h[x.merchant_id] = b
+    end
+    return h
+  end
+
+  def count_items_by_merchant(hash)
+    i = {}
+    hash.each do |k,v|
+      i[k] = v.count
+    end
+    return i
+  end
+
+  def find_associated_merchant_instances(hash)
+    j = []
+    hash.each do |k,v|
+      j<< k if v == 1
+    end
+    @revenue.find_merchant_instances(j)
   end
 
 private
