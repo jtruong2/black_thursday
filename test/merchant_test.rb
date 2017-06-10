@@ -4,34 +4,40 @@ require_relative "../lib/merchant_repository"
 
 class MerchantTest < Minitest::Test
 
-  def test_new_instance
-    mr = MerchantRepository.new("./test/data/merchant_fixture.csv",self)
+  attr_reader :m
 
-    assert_instance_of Merchant, mr.contents[12334105]
+  def setup
+    @m = Merchant.new({name:       "jejum",
+                       id:         "12334141",
+                       created_at: "2007-06-25",
+                       updated_at: "2015-09-09"}, self)
+  end
+
+  def test_new_instance
+
+    assert_instance_of Merchant, m
   end
 
   def test_can_access_name
-    mr = MerchantRepository.new("./test/data/merchant_fixture.csv",self)
 
-    assert_equal "MiniatureBikez", mr.contents[12334113].name
+    assert_equal "jejum", m.name
   end
 
   def test_can_access_created_at
-    mr = MerchantRepository.new("./test/data/merchant_fixture.csv",self)
 
-    assert_equal "2010-07-15 00:00:00 -0600", mr.contents[12334123].created_at.to_s
+    assert_equal "2007-06-25 00:00:00 -0600", m.created_at.to_s
+    assert_instance_of Time, m.created_at
   end
 
   def test_can_acces_updated_at
-    mr = MerchantRepository.new("./test/data/merchant_fixture.csv",self)
 
-    assert_equal "2012-04-16 00:00:00 -0600", mr.contents[12334135].updated_at.to_s
+    assert_equal "2015-09-09 00:00:00 -0600", m.updated_at.to_s
+    assert_instance_of Time, m.updated_at
   end
 
   def test_can_access_id
-    mr = MerchantRepository.new("./test/data/merchant_fixture.csv",self)
 
-    assert_equal 12334132, mr.contents[12334132].id
+    assert_equal 12334141, m.id
   end
 
 end

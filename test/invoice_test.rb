@@ -5,62 +5,65 @@ require_relative'../lib/sales_engine'
 require 'pry'
 
 class InvoiceTest < Minitest::Test
+
+  attr_reader :i
+  attr_reader :se
+
   def setup
-    def setup
-        {:items => "./test/data/itemsample.csv",
-        :merchants => "./test/data/merchant_fixture.csv",
-        :salesanalyst => "./test/data/salesanalystsample.csv",
-        :invoices => "./test/data/invoices_fixture.csv",
-        :invoice_items => "./test/data/invoice_items_fixture.csv",
-        :transactions => "./test/data/transactions_fixture.csv",
-        :customers => "./test/data/customers_fixture.csv"}
-    end
+    @i = Invoice.new({id:         "18",
+                      customer_id: "5",
+                      merchant_id: "12334839",
+                      status:      "shipped",
+                      created_at:  "2001-12-13",
+                      updated_at:  "2006-05-02"}, self)
+
+    @se = SalesEngine.from_csv({:items=>"./data/items.csv",
+                                :merchants => "./data/merchants.csv",
+                                :invoices =>"./data/invoices.csv",
+                                :invoice_items=>"./data/invoice_items.csv",
+                                :transactions=>"./data/transactions.csv",
+                                :customers=>"./data/customers.csv"})
   end
 
   def test_new_instance
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_instance_of Invoice, ir.contents[1]
+    assert_instance_of Invoice, i
   end
 
   def test_return_id_integer
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal 12, ir.contents[12].id
+    assert_equal 18, i.id
   end
 
   def test_return_customer_id
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal 3, ir.contents[15].customer_id
+    assert_equal 5, i.customer_id
   end
 
   def test_return_merchant_id
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal 12334208, ir.contents[30].merchant_id
+    assert_equal 12334839, i.merchant_id
   end
 
   def test_return_status
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal :shipped, ir.contents[15].status
+    assert_equal :shipped, i.status
+    assert_instance_of Symbol, i.status
   end
 
   def test_return_created_at
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal "2009-02-07 00:00:00 -0700", ir.contents[1].created_at.to_s
+    assert_equal "2001-12-13 00:00:00 -0700", i.created_at.to_s
+    assert_instance_of Time, i.created_at
   end
 
   def test_return_updated_at
-    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal "2014-07-01 00:00:00 -0600", ir.contents[15].updated_at.to_s
+    assert_equal "2006-05-02 00:00:00 -0600", i.updated_at.to_s
+    assert_instance_of Time, i.updated_at
   end
 
   def test_find_total
-    se = SalesEngine.from_csv({:items=>"./data/items.csv",:merchants => "./data/merchants.csv",:invoices =>"./data/invoices.csv",:invoice_items=>"./data/invoice_items.csv",:transactions=>"./data/transactions.csv",:customers=>"./data/customers.csv"})
     ir =se.invoices
     inv = ir.contents
     tr =inv[1]
