@@ -7,7 +7,7 @@ class CustomerTest < Minitest::Test
   attr_reader :customer
 
   def setup
-    @customer = Customer.new({ :id => 6,
+    @customer = Customer.new({ :id => "6",
                                :first_name => "Joan",
                                :last_name  => "Clarke",
                                :created_at => "2012-03-27 14:56:10 UTC",
@@ -37,11 +37,13 @@ class CustomerTest < Minitest::Test
 
   def test_created_at
 
+    assert_equal "2012-03-27 14:56:10 UTC", customer.created_at.to_s
     assert_instance_of Time, customer.created_at
   end
 
   def test_updated_at
 
+    assert_equal "2012-03-27 14:56:10 UTC", customer.updated_at.to_s
     assert_instance_of Time, customer.created_at
   end
 
