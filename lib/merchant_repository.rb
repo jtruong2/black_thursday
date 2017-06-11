@@ -24,7 +24,7 @@ class MerchantRepository
   end
 
   def all
-    merchants = contents.map { |k,v| v }
+    contents.map { |k,v| v }
   end
 
   def find_by_id(id_number)
@@ -42,7 +42,9 @@ class MerchantRepository
   end
 
   def find_all_by_name(merchant)
-    lookup = contents.values.find_all { |v| v.name.downcase.include?(merchant.downcase) }
+    lookup = contents.values.find_all do |v|
+      v.name.downcase.include?(merchant.downcase)
+    end
     lookup.compact
   end
 

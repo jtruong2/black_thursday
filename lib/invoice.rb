@@ -21,7 +21,7 @@ class Invoice
 
   def date_convert(from_file)
     date = from_file.split("-")
-    time = Time.new(date[0], date[1], date[2])
+    Time.new(date[0], date[1], date[2])
   end
 
   def merchant
@@ -33,7 +33,7 @@ class Invoice
     b = a.map do |x|
       x.item_id
     end
-    z = b.map do |x|
+    b.map do |x|
       @parent.parent.items.find_by_id(x)
     end
   end
@@ -47,20 +47,35 @@ class Invoice
   end
 
   def is_paid_in_full?
-    a = @parent.parent.transactions.find_all_by_invoice_id(id)
-    b = a.map do |x|
-      x.result
-    end
-    b.include?("failed") || b == [] ? false : true
+    b = transaction_status
+    b.any? {|x| x == "success" ? true : false }
   end
 
   def total
-    a = @parent.parent.invoice_items.find_all_by_invoice_id(id)
-    b = transactions
-    c = a.map do |x|
-      x.unit_price * x.quantity
+    if is_paid_in_full?
+      total_invoice_revenue(id)
     end
-    d = c.reduce(:+)
   end
 
+  def transaction_status
+    a = @parent.parent.transactions.contents
+    list_of_transactions_for_this_invoice_id = []
+    a.values.map do |v|
+      if id == v.invoice_id
+        list_of_transactions_for_this_invoice_id << v.result
+      end
+    end
+    return list_of_transactions_for_this_invoice_id
+  end
+
+  def total_invoice_revenue(inv_id)
+    invoice_item_contents = @parent.parent.invoice_items.all
+    b = []
+    invoice_item_contents.map do |inv_item|
+      if inv_id == inv_item.invoice_id
+        b << (inv_item.unit_price * inv_item.quantity)
+      end
+    end
+    b.reduce(:+)
+  end
 end

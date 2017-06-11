@@ -18,7 +18,7 @@ class Merchant
 
   def date_convert(from_file)
     date = from_file.split("-")
-    time = Time.new(date[0], date[1], date[2])
+    Time.new(date[0], date[1], date[2])
   end
 
   def items
@@ -34,7 +34,7 @@ class Merchant
     b = a.map do |x|
       x.customer_id
     end.uniq
-    c = b.map do |x|
+    b.map do |x|
       @parent.parent.customers.contents[x]
     end
   end
