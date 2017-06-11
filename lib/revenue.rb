@@ -26,33 +26,24 @@ class Revenue
   end
 
   def extract_merchants_and_revenues
-    invoice_id_and_sales = {}
+    merchant_id_and_sales = {}
     access_invoices.values.map do |inv|
       invoice_total = inv.total
       next if invoice_total == nil
-      if invoice_id_and_sales.has_key?(inv.id)
-        invoice_id_and_sales[inv.id] += invoice_total
+      if merchant_id_and_sales.has_key?(inv.merchant_id)
+        merchant_id_and_sales[inv.merchant_id] += invoice_total
       else
-        invoice_id_and_sales[inv.id] = invoice_total
+        merchant_id_and_sales[inv.merchant_id] = invoice_total
       end
     end
-    replace_invoice_id_with_merchant_id(invoice_id_and_sales)
-  end
-
-  def replace_invoice_id_with_merchant_id(hash)
-    hash.each do |k,v|
-      a = invoice_to_merchant_conversion(k)
-      @revenue_by_merchant_id[a] = v
-    end
+    a = merchant_id_and_sales.each {|k,v| @revenue_by_merchant_id[k] = v}
   end
 
   def merchant_revenue
-    a = @revenue_by_merchant_id
-    b = a.invert.to_a
-    b.sort!
-    b.reverse!
-    c = b.transpose
-    c[1]
+    arrange = @revenue_by_merchant_id.invert.to_a
+    arrange.sort!
+    arrange.reverse!
+    arrange.transpose[1]
   end
 
   def find_earners(x)
@@ -68,8 +59,7 @@ class Revenue
   def find_merchant_instances(arr)
     final = []
     arr.each do |x|
-      a = merchant_to_instance_conversion(x)
-      final << a
+      final << merchant_to_instance_conversion(x)
     end
     final
   end

@@ -26,22 +26,14 @@ class SalesAnalyst
   end
 
   def merchants_with_high_item_count
-<<<<<<< HEAD
     x = []
-=======
->>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     y = []
     a = item_count_per_merchant
     b = average_items_per_merchant_standard_deviation
     c = average_items_per_merchant
     d = @parent.merchants.contents
-<<<<<<< HEAD
     a.each do |k,v|
       y << k if v > b + c
-=======
-    a.find_all do |k,v|
-      y << d[k] if v > b + c
->>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     end
     y.map do |x|
       d[x]
@@ -77,19 +69,12 @@ class SalesAnalyst
 
   def golden_items
     golden = []
-<<<<<<< HEAD
-    a = average_average_price_per_merchant
-    b = average_price_per_merchant_standard_deviation
-    x = @parent.items.contents.values.each do |v|
-      golden << v if v.unit_price > (((b - a) * 2) - a)
-=======
     a = @parent.items.contents.values.map { |v| v.unit_price}
     b = a.reduce(:+)/a.count
     c = average_price_per_merchant_standard_deviation
     d = @parent.items.contents
     @parent.items.contents.map do |k,v|
       golden << d[k] if v.unit_price.to_f > b + (c + c)
->>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     end
     return golden
   end
@@ -153,7 +138,6 @@ class SalesAnalyst
     count.each do |k,v|
       if k == status
         percentage = v / total.to_f * 100
-
       end
     end
     percentage.round(2)
@@ -165,7 +149,6 @@ class SalesAnalyst
 
   def top_revenue_earners(x)
     @revenue.find_earners(x)
-
   end
 
   def revenue_by_merchant(merchant_id)
@@ -186,11 +169,6 @@ class SalesAnalyst
       b = @parent.items.find_all_by_merchant_id(x.merchant_id)
       h[x.merchant_id] = b
     end
-<<<<<<< HEAD
-    merchants.each do |x|
-      a = average_item_price_for_merchant(x)
-      avg_prices << a.to_f
-=======
     return h
   end
 
@@ -198,7 +176,6 @@ class SalesAnalyst
     i = {}
     hash.each do |k,v|
       i[k] = v.count
->>>>>>> a4abab1ff9a790c00fbb9e3332756cacca0506ea
     end
     return i
   end
@@ -301,9 +278,4 @@ private
     end
     return counts
   end
-
-  # def total_revenue_by_date(date)
-  #
-  # end
-
 end
