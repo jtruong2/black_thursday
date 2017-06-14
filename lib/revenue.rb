@@ -80,10 +80,12 @@ class Revenue
     merchant_inv = successful_invoices.compact.delete_if do |inv|
       m_id != inv.merchant_id
     end
-    merchant_inv.map do |inv|
+    items_and_revenue = merchant_inv.map do |inv|
       revenue_per_item(inv)
     end
-
+    all_items_of_merch = items_and_revenue.reduce(&:merge)
+    max_rev = all_items_of_merch.max_by { |k,v| v}
+    item_to_instance_conversion(max_rev[0])
   end
 
 
@@ -125,11 +127,21 @@ private
     end
   end
 
-  def revenue_per_item(inv)
-    @parent.parent.invoice_items.all.map do |inv_items|
-      if inv.id == inv_items.invoice_id
-        return (inv_items.unit_price * inv_items.quantity)
+  def item_to_instance_conversion(item_id)
+    @parent.parent.items.all.map do |item|
+      if item.id == item_id
+        return item
       end
     end
+  end
+
+  def revenue_per_item(inv)
+    item_and_revenue = {}
+    @parent.parent.invoice_items.all.map do |inv_items|
+      if inv.id == inv_items.invoice_id
+        item_and_revenue[inv_items.item_id] = (inv_items.unit_price * inv_items.quantity).to_f
+      end
+    end
+    return item_and_revenue
   end
 end
