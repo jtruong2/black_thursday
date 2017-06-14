@@ -155,6 +155,10 @@ class SalesAnalyst
     @revenue.revenue_by_merchant_id[merchant_id]
   end
 
+  def merchants_with_pending_invoices
+    @revenue.find_merchants_with_unpaid_invoices.compact
+  end
+
   def merchants_with_only_one_item
     a = compile_items_by_merchant
     b = count_items_by_merchant(a)
@@ -186,6 +190,10 @@ class SalesAnalyst
       j<< k if v == 1
     end
     @revenue.find_merchant_instances(j)
+  end
+
+  def best_item_for_merchant(m_id)
+    @revenue.find_best_item_for_merchant(m_id)
   end
 
 private

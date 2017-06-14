@@ -64,6 +64,28 @@ class Revenue
     final
   end
 
+  def find_merchants_with_unpaid_invoices
+    pending_invoices = @parent.parent.invoices.all.map do |inv|
+      inv.merchant_id if inv.is_paid_in_full? == false
+    end
+    pending_invoices.uniq.map do |m_id|
+      merchant_to_instance_conversion(m_id)
+    end
+  end
+
+  def find_best_item_for_merchant(m_id)
+    successful_invoices = @parent.parent.invoices.all.map do |inv|
+      inv if inv.is_paid_in_full? == true
+    end
+    merchant_inv = successful_invoices.compact.delete_if do |inv|
+      m_id != inv.merchant_id
+    end
+    merchant_inv.map do |inv|
+      revenue_per_item(inv)
+    end
+
+  end
+
 
 private
 
@@ -99,6 +121,14 @@ private
     access_merchants.values.find do |v|
       if v.id == m_id
         return v
+      end
+    end
+  end
+
+  def revenue_per_item(inv)
+    @parent.parent.invoice_items.all.map do |inv_items|
+      if inv.id == inv_items.invoice_id
+        return (inv_items.unit_price * inv_items.quantity)
       end
     end
   end
