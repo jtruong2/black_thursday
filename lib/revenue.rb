@@ -14,15 +14,24 @@ class Revenue
   end
 
   def extract_date_and_revenue
-    access_invoice_items.values.each do |v|
-      a = date_convert(v.created_at)
-      b = v.unit_price * v.quantity
-      if revenue_by_date.has_key?(v.created_at)
-        @revenue_by_date[a] += (v.unit_price * v.quantity)
+    access_invoices.values.each do |v|
+      date = v.created_at.to_s.split(" ")
+      date = Time.parse(date[0])
+      total = find_total_for_invoice(v.id)
+      if revenue_by_date.has_key?(date)
+        @revenue_by_date[date] += total
       else
-        @revenue_by_date[a] = b
+        @revenue_by_date[date] = total
       end
     end
+  end
+
+  def find_total_for_invoice(inv_id)
+    access_invoice_items.values.map do |v|
+      if v.invoice_id == inv_id
+        (v.unit_price * v.quantity)
+      end
+    end.compact.reduce(:+)
   end
 
   def extract_merchants_and_revenues
@@ -36,7 +45,7 @@ class Revenue
         merchant_id_and_sales[inv.merchant_id] = invoice_total
       end
     end
-    a = merchant_id_and_sales.each {|k,v| @revenue_by_merchant_id[k] = v}
+    merchant_id_and_sales.each {|k,v| @revenue_by_merchant_id[k] = v}
   end
 
   def merchant_revenue

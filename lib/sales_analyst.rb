@@ -147,8 +147,12 @@ class SalesAnalyst
     @revenue.revenue_by_date[date]
   end
 
-  def top_revenue_earners(x)
+  def top_revenue_earners(x = nil)
     @revenue.find_earners(x)
+  end
+
+  def merchants_ranked_by_revenue
+    top_revenue_earners(475)
   end
 
   def revenue_by_merchant(merchant_id)
