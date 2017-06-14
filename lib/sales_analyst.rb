@@ -147,7 +147,6 @@ class SalesAnalyst
 
   def top_revenue_earners(x)
     @revenue.find_earners(x)
-
   end
 
   def revenue_by_merchant(merchant_id)
@@ -161,31 +160,42 @@ class SalesAnalyst
     return c
   end
 
-  def compile_items_by_merchant
-    h = {}
-    a = @parent.items.contents
-    a.values.each do |x|
-      b = @parent.items.find_all_by_merchant_id(x.merchant_id)
-      h[x.merchant_id] = b
-    end
-    return h
+
+
+  def merchants_with_only_one_item_registered_in_month(month)
+    a = compile_invoices_by_merchant_by_month(month)
+    b = count_items_by_merchant(a)
+    c = return_merchant_instances(b)
+    return c
   end
 
-  def count_items_by_merchant(hash)
-    i = {}
-    hash.each do |k,v|
-      i[k] = v.count
-    end
-    return i
+  #start again here - rewrite for items instead of invoices
+
+  def return_merchant_instances(hash)
+    a = hash.delete_if { |k,v| v >= 2 }
+    a.keys
   end
 
-  def find_associated_merchant_instances(hash)
-    j = []
-    hash.each do |k,v|
-      j<< k if v == 1
-    end
-    @revenue.find_merchant_instances(j)
+  def most_sold_item_for_merchant(merchant_id)
+    items_by_merchant = @parent.items.find_all_by_merchant_id(merchant_id)
+    invoice_items_by_invoice = invoice_items_by_invoice(items_by_merchant).flatten
+    count = count_invoice_items(invoice_items_by_invoice)
+    highest = count.sort_by { |x,y| y }
+    best_seller = find_best_seller(highest)
+    return return_item_instances(best_seller)
   end
+
+  def best_item_for_merchant(merchant_id)
+    #can't use invoice_item instances need to use ids
+    items_by_merchant = @parent.items.find_all_by_merchant_id(merchant_id)
+    invoice_items = invoice_items_by_invoice(items_by_merchant).flatten
+    revenue_for_each = get_revenue_for_each_invoice_item(invoice_items)
+    total_for_each_item = add_revenue_item_totals(revenue_for_each).to_a
+    a = total_for_each_item.sort_by! { |x| x[1] }
+    best_seller = a.reverse[0][0]
+    item = @parent.items.find_by_id(best_seller.item_id)
+  end
+
 
 private
 
@@ -276,6 +286,85 @@ private
       counts[id] += 1
     end
     return counts
+  end
+
+  def compile_items_by_merchant
+    h = {}
+    a = @parent.items.contents
+    a.values.each do |x|
+      b = @parent.items.find_all_by_merchant_id(x.merchant_id)
+      h[x.merchant_id] = b
+    end
+    return h
+  end
+
+  def count_items_by_merchant(hash)
+    i = {}
+    hash.each do |k,v|
+      i[k] = v.count
+    end
+    return i
+  end
+
+  def find_associated_merchant_instances(hash)
+    j = []
+    hash.each do |k,v|
+      j<< k if v == 1
+    end
+    @revenue.find_merchant_instances(j)
+  end
+
+  def count_invoice_items(array)
+    count = {}
+    array.flatten.each do |x|
+      if count.keys.include?(x.item_id)
+        count[x.item_id] += 1
+      elsif
+        count[x.item_id] = 1
+      end
+    end
+    return count.to_a
+  end
+
+  def find_best_seller(array)
+    sorted = []
+     a = array.reverse
+    sorted << a.shift
+    a.each do |x|
+      sorted << x if x[1] >= sorted[0][1]
+    end
+    sorted
+  end
+
+  def return_item_instances(array)
+    a = array.map { |x| x[0] }
+    b = a.map { |x| @parent.items.contents[x] }
+  end
+
+  def invoice_items_by_invoice(array)
+    array.map do |x|
+      @parent.invoice_items.find_all_by_item_id(x.id)
+    end
+  end
+
+  def get_revenue_for_each_invoice_item(array)
+    final = {}
+    array.each do |x|
+      final[x] = ((x.quantity) * (x.unit_price))
+    end
+    return final
+  end
+
+  def add_revenue_item_totals(hash)
+    final = {}
+    hash.each do |k,v|
+      if final.keys.include?(k.invoice_id)
+        final[k] += v
+      elsif
+        final[k] = v
+      end
+    end
+    return final
   end
 
 end

@@ -75,7 +75,7 @@ class Revenue
   end
 
 
-private
+# private
 
   def invoices_link
     @parent.parent.invoices
