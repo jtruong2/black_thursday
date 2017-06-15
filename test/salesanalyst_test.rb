@@ -143,7 +143,7 @@ class SalesAnalystTest < Minitest::Test
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
-    assert_equal 20, sa.merchants_with_only_one_item_registered_in_month("June").length
+    assert_equal 20, sa.merchants_with_only_one_item_registered_in_month("March").length
   end
 
   def test_most_sold_item_for_merchant
