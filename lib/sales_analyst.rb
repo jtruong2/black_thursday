@@ -184,6 +184,20 @@ class SalesAnalyst
     return by_month
   end
 
+  def most_sold_item_for_merchant(merchant_id)
+    a = find_successful_invoices_by_merchant(merchant_id)
+    b = invoice_items_by_invoice(a)
+    c = get_revenue_for_each_invoice_item(b)
+    d = find_best_seller(c)
+    e = return_item_instances(d.keys)
+  end
+
+    def find_successful_invoices_by_merchant(merchant_id)
+      @parent.invoices.all.map do |inv|
+        inv if inv.is_paid_in_full? == true && inv.merchant_id == merchant_id
+      end.compact
+    end
+
 private
 
   def average_price_per_merchant_standard_deviation
@@ -313,19 +327,14 @@ private
     return count
   end
 
-  def find_best_seller(array)
-    sorted = []
-     a = array.reverse
-    sorted << a.shift
-    a.each do |x|
-      sorted << x if x[1] >= sorted[0][1]
-    end
-    sorted
+  def find_best_seller(hash)
+    hash.select {|k,v| v == hash.values.max}
   end
 
   def return_item_instances(array)
-    a = array.map { |x| x[0] }
-    b = a.map { |x| @parent.items.contents[x] }
+    array.map do |x|
+      @parent.items.find_by_id(x)
+    end
   end
 
   def invoice_items_by_invoice(array)
@@ -337,7 +346,7 @@ private
   def get_revenue_for_each_invoice_item(array)
     final = {}
     array.each do |x|
-      final[x] = ((x.quantity) * (x.unit_price))
+      final[x.item_id] = ((x.quantity) * (x.unit_price))
     end
     return final
   end

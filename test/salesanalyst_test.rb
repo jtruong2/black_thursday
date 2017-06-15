@@ -140,6 +140,7 @@ class SalesAnalystTest < Minitest::Test
   # end
 
   def test_merchants_with_only_one_item_registered_in_month
+    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
@@ -147,15 +148,24 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_most_sold_item_for_merchant
-    skip #need to look for successful invoices
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
+    merchant_id = 12334189
+    expected = sa.most_sold_item_for_merchant(merchant_id)
 
-    assert_equal 1, sa.most_sold_item_for_merchant(12334189).count
-    assert_instance_of Item, sa.most_sold_item_for_merchant(12334189)[0]
-    assert_equal 263500432, sa.most_sold_item_for_merchant(12334189)[0].id
-    assert sa.most_sold_item_for_merchant(12334296).include?(263549386)
-    assert_equal 4, sa.most_sold_item_for_merchant(12337105).length
+    # assert expected.map(&:id).include?(26354984)
+    # assert expected.map(&:name).include?("Adult Pricess Leia Hat")
+    assert_instance_of Item, expected.first
+
+    merchant_id = 12334768
+    expected = sa.most_sold_item_for_merchant(merchant_id)
+
+    assert expected.map(&:id).include?(263549386)
+
+    merchant_id = 12337105
+    expected = sa.most_sold_item_for_merchant(merchant_id)
+
+    assert_equal 4, expected.length
   end
 
   def test_best_item_for_merchant
