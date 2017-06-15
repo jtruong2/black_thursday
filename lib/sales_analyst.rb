@@ -170,6 +170,14 @@ class SalesAnalyst
     return c
   end
 
+  def most_sold_item_for_merchant(merchant_id)
+    a = find_successful_invoices_by_merchant(merchant_id)
+    b = invoice_items_by_invoice(a)
+    c = get_quantity_for_each_invoice_item(b)
+    d = find_best_seller(c)
+    e = return_item_instances(d.keys)
+  end
+
   def compile_items_by_merchant
     h = {}
     a = @parent.items.contents
@@ -289,5 +297,35 @@ private
       counts[id] += 1
     end
     return counts
+  end
+
+  def find_successful_invoices_by_merchant(merchant_id)
+    @parent.invoices.all.map do |inv|
+      inv if inv.is_paid_in_full? == true && inv.merchant_id == merchant_id
+    end.compact
+  end
+
+  def invoice_items_by_invoice(array)
+    array.map do |x|
+      @parent.invoice_items.find_all_by_invoice_id(x.id)
+    end.flatten
+  end
+
+  def get_quantity_for_each_invoice_item(array)
+    final = {}
+    array.each do |x|
+      final[x.item_id] = x.quantity
+    end
+    return final
+  end
+
+  def find_best_seller(hash)
+    hash.select {|k,v| v == hash.values.max}
+  end
+
+  def return_item_instances(array)
+    array.map do |x|
+      @parent.items.find_by_id(x)
+    end
   end
 end
