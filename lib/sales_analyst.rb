@@ -160,11 +160,11 @@ class SalesAnalyst
     return c
   end
 
-  def merchants_with_only_one_item_registered_in_month(month)
-    a = find_successful_invoices_by_month(month)
-    c = find_merchants_from_invoices(a)
-    d = get_merchant_instances_by_month(c, month)
-  end
+  # def merchants_with_only_one_item_registered_in_month(month)
+  #   a = find_successful_invoices_by_month(month)
+  #   c = find_merchants_from_invoices(a)
+  #   d = get_merchant_instances_by_month(c, month)
+  # end
 
   def find_successful_invoices_by_month(month)
     @parent.invoices.all.map do |inv|
@@ -192,11 +192,14 @@ class SalesAnalyst
     e = return_item_instances(d.keys)
   end
 
-    def find_successful_invoices_by_merchant(merchant_id)
-      @parent.invoices.all.map do |inv|
-        inv if inv.is_paid_in_full? == true && inv.merchant_id == merchant_id
-      end.compact
-    end
+  def merchants_with_only_one_item_registered_in_month(month)
+    merchants = merchants_with_only_one_item
+    one_registered = merchants.map do |x|
+      x if x.created_at.strftime("%B") == month
+    end.compact
+    return one_registered
+  end
+
 
 private
 
@@ -373,6 +376,51 @@ private
     end
   end
   return final
+  end
+
+  def find_successful_invoices_by_merchant(merchant_id)
+    @parent.invoices.all.map do |inv|
+      inv if inv.is_paid_in_full? == true && inv.merchant_id == merchant_id
+    end.compact
+  end
+
+  def find_successful_invoices_by_month(month)
+    @parent.invoices.all.map do |inv|
+      inv if inv.is_paid_in_full? == true && inv.created_at.strftime("%B") == month
+    end.compact
+  end
+
+  def count_invoices_by_merchant(array)
+    final = {}
+    array.each do |x|
+      if final.keys.include(x.merchant_id)
+        final[x.merchant_id] +=1
+      elsif
+        final[x.merchant_id] = 1
+      end
+    end
+    return find_lowest(final)
+  end
+
+  def find_lowest(hash)
+    hash.select { |k,v| v == hash.values.min }
+  end
+
+  def find_merchants(array)
+    array.map do |merchant_id|
+      @parent.merchants.find_by_id(merchant_id)
+    end
+  end
+
+  # def invoice_items_by_invoice(array, month)
+  #   in_it = array.map do |x|
+  #     @parent.invoice_items.find_all_by_invoice_id(x.id)
+  #   end
+  #   return invoice_items_by_month(in_it.flatten, month)
+  # end
+
+  def invoice_items_by_month(array, month)
+    array.map { |x| x if x.created_at.strftime("%B") == month }
   end
 
 

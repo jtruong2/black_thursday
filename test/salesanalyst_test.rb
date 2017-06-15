@@ -140,11 +140,17 @@ class SalesAnalystTest < Minitest::Test
   # end
 
   def test_merchants_with_only_one_item_registered_in_month
-    skip
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
+    expected = sa.merchants_with_only_one_item_registered_in_month("March")
 
-    assert_equal 20, sa.merchants_with_only_one_item_registered_in_month("March").length
+    assert_equal 21, expected.length
+    assert_instance_of Merchant, expected.first
+
+    expected = sa.merchants_with_only_one_item_registered_in_month("June")
+
+    assert_equal 18, expected.length
+    assert_instance_of Merchant, expected.first
   end
 
   def test_most_sold_item_for_merchant
@@ -167,15 +173,5 @@ class SalesAnalystTest < Minitest::Test
 
     assert_equal 4, expected.length
   end
-
-  def test_best_item_for_merchant
-    skip
-    se = SalesEngine.from_csv(setup)
-    sa = SalesAnalyst.new(se)
-
-    assert_instance_of Item, sa.best_item_for_merchant(12334863)
-    assert_equal 263500208, sa.best_item_for_merchant(12334189).id
-  end
-
 
 end
