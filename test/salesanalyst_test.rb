@@ -153,8 +153,8 @@ class SalesAnalystTest < Minitest::Test
     merchant_id = 12334189
     expected = sa.most_sold_item_for_merchant(merchant_id)
 
-    # assert expected.map(&:id).include?(26354984)
-    # assert expected.map(&:name).include?("Adult Pricess Leia Hat")
+    assert expected.map(&:id).include?(263524984)
+    assert expected.map(&:name).include?("Adult Princess Leia Hat")
     assert_instance_of Item, expected.first
 
     merchant_id = 12334768

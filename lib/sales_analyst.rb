@@ -187,7 +187,7 @@ class SalesAnalyst
   def most_sold_item_for_merchant(merchant_id)
     a = find_successful_invoices_by_merchant(merchant_id)
     b = invoice_items_by_invoice(a)
-    c = get_revenue_for_each_invoice_item(b)
+    c = get_quantity_for_each_invoice_item(b)
     d = find_best_seller(c)
     e = return_item_instances(d.keys)
   end
@@ -343,10 +343,10 @@ private
     end.flatten
   end
 
-  def get_revenue_for_each_invoice_item(array)
+  def get_quantity_for_each_invoice_item(array)
     final = {}
     array.each do |x|
-      final[x.item_id] = ((x.quantity) * (x.unit_price))
+      final[x.item_id] = x.quantity
     end
     return final
   end
