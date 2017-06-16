@@ -119,22 +119,20 @@ class SalesAnalystTest < Minitest::Test
   def test_top_revenue_earners
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
-    binding.pry
 
     assert_equal 5, sa.top_revenue_earners(5).length
     assert_equal 20, sa.top_revenue_earners.length
     assert_equal 12334634, sa.top_revenue_earners(5).first.id
     assert_instance_of Merchant, sa.top_revenue_earners(5)[0]
   end
-  
+
   def test_merchants_ranked_by_revenue
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
-    binding.pry
 
     assert_equal 12334634, sa.merchants_ranked_by_revenue.first.id
     assert_equal 12336175, sa.merchants_ranked_by_revenue.last.id
-    assert_instance_of Merchant, sa.merchants_ranked_by_revenue.first.class
+    assert_instance_of Merchant, sa.merchants_ranked_by_revenue.first
   end
 
   def test_merchants_with_pending_invoices
@@ -148,7 +146,7 @@ class SalesAnalystTest < Minitest::Test
     se = SalesEngine.from_csv(setup)
     sa = SalesAnalyst.new(se)
 
-    assert_equal 18631.46, sa.revenue_by_merchant(12335938).to_f
+    assert_equal 126300.9, sa.revenue_by_merchant(12335938).to_f
     assert_instance_of BigDecimal, sa.revenue_by_merchant(12335938)
   end
 
