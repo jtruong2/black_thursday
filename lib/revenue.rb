@@ -49,10 +49,13 @@ class Revenue
   end
 
   def merchant_revenue
-    arrange = @revenue_by_merchant_id.invert.to_a
-    arrange.sort!
-    arrange.reverse!
-    arrange.transpose[1]
+    merch = @revenue_by_merchant_id.sort_by {|k,v| v}.reverse.transpose[0]
+    access_merchants.keys.each do |k|
+      if merch.include?(k) == false
+        merch << k
+      end
+    end
+    merch
   end
 
   def find_earners(x)
