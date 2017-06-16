@@ -178,6 +178,14 @@ class SalesAnalyst
     e = return_item_instances(d.keys)
   end
 
+  def merchants_with_only_one_item_registered_in_month(month)
+    merchants = merchants_with_only_one_item
+    one_registered = merchants.map do |x|
+      x if x.created_at.strftime("%B") == month
+    end.compact
+    return one_registered
+  end
+
   def compile_items_by_merchant
     h = {}
     a = @parent.items.contents
