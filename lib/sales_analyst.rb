@@ -26,7 +26,7 @@ class SalesAnalyst
   end
 
   def merchants_with_high_item_count
-    x = []
+    # x = []
     y = []
     a = item_count_per_merchant
     b = average_items_per_merchant_standard_deviation
@@ -35,8 +35,8 @@ class SalesAnalyst
     a.each do |k,v|
       y << k if v > b + c
     end
-    y.map do |x|
-      d[x]
+    y.map do |i|
+      d[i]
     end
   end
 
@@ -175,7 +175,7 @@ class SalesAnalyst
     b = invoice_items_by_invoice(a)
     c = get_quantity_for_each_invoice_item(b)
     d = find_best_seller(c)
-    e = return_item_instances(d.keys)
+    return return_item_instances(d.keys)
   end
 
   def merchants_with_only_one_item_registered_in_month(month)
@@ -230,7 +230,7 @@ private
     variance = arr.reduce(0.0) do |sum, element|
       sum + (element - mean)**2
     end / (arr.length - 1)
-    a = Math.sqrt(variance)
+    Math.sqrt(variance)
   end
 
   def item_count_per_merchant

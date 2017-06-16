@@ -5,57 +5,77 @@ require 'pry'
 
 class InvoiceItemTest < Minitest::Test
 
-  def test_new_instance
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
+  attr_reader :invoice_item
 
-    assert_instance_of InvoiceItem, iir.contents[1]
+  def setup
+    @invoice_item = InvoiceItem.new({:id         => "190",
+                                     :item_id    => "263454779",
+                                     :invoice_id => "42",
+                                     :quantity   => "2",
+                                     :unit_price => "15191",
+                                     :created_at => "2012-03-27 14:54:11 UTC",
+                                     :updated_at => "2012-03-27 14:54:11 UTC"}, self)
   end
 
-  def test_return_id_integer
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
+  def test_new_instance
 
-    assert_equal 13, iir.contents[13].id
+    assert_instance_of InvoiceItem, invoice_item
+  end
+
+  def test_return_id
+
+    assert_equal 190, invoice_item.id
+    assert_instance_of Fixnum, invoice_item.id
   end
 
   def test_return_invoice_id
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
 
-    assert_equal 5, iir.contents[24].invoice_id
+    assert_equal 42, invoice_item.invoice_id
+    assert_instance_of Fixnum, invoice_item.invoice_id
   end
 
   def test_return_item_id
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
 
-    assert_equal 263537372, iir.contents[41].item_id
+    assert_equal 263454779, invoice_item.item_id
+    assert_instance_of Fixnum, invoice_item.item_id
   end
 
   def test_return_quantity
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
 
-    assert_equal 5, iir.contents[1].quantity
+    assert_equal 2, invoice_item.quantity
+    assert_instance_of Fixnum, invoice_item.quantity
   end
 
   def test_return_unit_price
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
 
-    assert_equal 42.64, iir.contents[14].unit_price.to_f
+    assert_equal 151.91, invoice_item.unit_price
+    assert_instance_of BigDecimal, invoice_item.unit_price
   end
 
   def test_return_created_at
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
 
-    assert_equal "2012-03-27 14:54:09 UTC", iir.contents[1].created_at.to_s
+    assert_equal "2012-03-27 14:54:11 UTC", invoice_item.created_at.to_s
+    assert_instance_of Time, invoice_item.created_at
   end
 
   def test_return_updated_at
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
 
-    assert_equal "2012-03-27 14:54:10 UTC", iir.contents[41].updated_at.to_s
+    assert_equal "2012-03-27 14:54:11 UTC", invoice_item.updated_at.to_s
+    assert_instance_of Time, invoice_item.updated_at
   end
 
   def test_unit_price_to_dollars
-    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv", self)
+    iir = InvoiceItemRepository.new("./test/data/invoice_items_fixture.csv",
+                                    self)
+    invoice_item = InvoiceItem.new({:id         => "190",
+                                     :item_id    => "263454779",
+                                     :invoice_id => "42",
+                                     :quantity   => "2",
+                                     :unit_price => "15191",
+                                     :created_at => "2012-03-27 14:54:11 UTC",
+                                     :updated_at => "2012-03-27 14:54:11 UTC"},
+                                     iir)
 
-    assert_equal 707.83, iir.contents[41].unit_price_to_dollars(41)
+    assert_equal 151.91, invoice_item.unit_price_to_dollars(190)
   end
 end

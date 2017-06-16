@@ -1,6 +1,8 @@
 require_relative 'test_helper.rb'
 require_relative '../lib/item'
+require 'pry'
 class ItemTest < Minitest::Test
+
   def sample_path
     {:name=>"Glitter scrabble frames",
      :description=>"Glitter scrabble frames\n\nAny colour glitter\nAny wording\n\nAvailable colour scrabble tiles\nPink\nBlue\nBlack\nWooden",
@@ -42,9 +44,8 @@ class ItemTest < Minitest::Test
 
   def test_convert_created_at_time
     i = Item.new(sample_path, nil)
-    time = Time.utc(2016,01,11,11,51,37)
 
-    assert_equal time, i.created_at
+    assert_equal "2016-01-11 11:51:37 UTC", i.created_at.to_s
   end
 
   def test_convert_updated_at_time

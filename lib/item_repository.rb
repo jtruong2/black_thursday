@@ -20,7 +20,6 @@ class ItemRepository
 
       h = Hash[row]
       d = h[:id]
-      # d = h.delete(:id)
       x[d.to_i] = Item.new(h, self)
     end
     x
@@ -28,8 +27,6 @@ class ItemRepository
 
   def all
     contents.map { |k,v| v }
-    # final = []
-    # final << contents
   end
 
   def find_by_id(id_number)
@@ -42,14 +39,6 @@ class ItemRepository
       return n
     end
     n
-    # contents.each do |k,v|
-    #   binding.pry
-    #   if v.name == name
-    #     return contents[k]
-    #   else
-    #     return nil
-    #   end
-    # end
   end
 
   def find_all_with_description(str)
