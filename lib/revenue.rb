@@ -14,45 +14,48 @@ class Revenue
   end
 
   def extract_date_and_revenue
-    access_invoice_items.values.each do |v|
-      a = date_convert(v.created_at)
-      b = v.unit_price * v.quantity
-      if revenue_by_date.has_key?(v.created_at)
-        @revenue_by_date[a] += (v.unit_price * v.quantity)
+    access_invoices.values.each do |v|
+      date = v.created_at.to_s.split(" ")
+      date = Time.parse(date[0])
+      total = find_total_for_invoice(v.id)
+      if revenue_by_date.has_key?(date)
+        @revenue_by_date[date] += total
       else
-        @revenue_by_date[a] = b
+        @revenue_by_date[date] = total
       end
     end
+  end
+
+  def find_total_for_invoice(inv_id)
+    access_invoice_items.values.map do |v|
+      if v.invoice_id == inv_id
+        (v.unit_price * v.quantity)
+      end
+    end.compact.reduce(:+)
   end
 
   def extract_merchants_and_revenues
-    invoice_id_and_sales = {}
+    merchant_id_and_sales = {}
     access_invoices.values.map do |inv|
       invoice_total = inv.total
       next if invoice_total == nil
-      if invoice_id_and_sales.has_key?(inv.id)
-        invoice_id_and_sales[inv.id] += invoice_total
+      if merchant_id_and_sales.has_key?(inv.merchant_id)
+        merchant_id_and_sales[inv.merchant_id] += invoice_total
       else
-        invoice_id_and_sales[inv.id] = invoice_total
+        merchant_id_and_sales[inv.merchant_id] = invoice_total
       end
     end
-    replace_invoice_id_with_merchant_id(invoice_id_and_sales)
-  end
-
-  def replace_invoice_id_with_merchant_id(hash)
-    hash.each do |k,v|
-      a = invoice_to_merchant_conversion(k)
-      @revenue_by_merchant_id[a] = v
-    end
+    merchant_id_and_sales.each {|k,v| @revenue_by_merchant_id[k] = v}
   end
 
   def merchant_revenue
-    a = @revenue_by_merchant_id
-    b = a.invert.to_a
-    b.sort!
-    b.reverse!
-    c = b.transpose
-    c[1]
+    merch = @revenue_by_merchant_id.sort_by {|k,v| v}.reverse.transpose[0]
+    access_merchants.keys.each do |k|
+      if merch.include?(k) == false
+        merch << k
+      end
+    end
+    merch
   end
 
   def find_earners(x)
@@ -68,10 +71,33 @@ class Revenue
   def find_merchant_instances(arr)
     final = []
     arr.each do |x|
-      a = merchant_to_instance_conversion(x)
-      final << a
+      final << merchant_to_instance_conversion(x)
     end
     final
+  end
+
+  def find_merchants_with_unpaid_invoices
+    pending_invoices = @parent.parent.invoices.all.map do |inv|
+      inv.merchant_id if inv.is_paid_in_full? == false
+    end
+    pending_invoices.uniq.map do |m_id|
+      merchant_to_instance_conversion(m_id)
+    end
+  end
+
+  def find_best_item_for_merchant(m_id)
+    successful_invoices = @parent.parent.invoices.all.map do |inv|
+      inv if inv.is_paid_in_full? == true
+    end
+    merchant_inv = successful_invoices.compact.delete_if do |inv|
+      m_id != inv.merchant_id
+    end
+    items_and_revenue = merchant_inv.map do |inv|
+      revenue_per_item(inv)
+    end
+    all_items_of_merch = items_and_revenue.reduce(&:merge)
+    max_rev = all_items_of_merch.max_by { |k,v| v}
+    item_to_instance_conversion(max_rev[0])
   end
 
 
@@ -111,5 +137,23 @@ private
         return v
       end
     end
+  end
+
+  def item_to_instance_conversion(item_id)
+    @parent.parent.items.all.map do |item|
+      if item.id == item_id
+        return item
+      end
+    end
+  end
+
+  def revenue_per_item(inv)
+    item_and_revenue = {}
+    @parent.parent.invoice_items.all.map do |inv_items|
+      if inv.id == inv_items.invoice_id
+        item_and_revenue[inv_items.item_id] = (inv_items.unit_price * inv_items.quantity).to_f
+      end
+    end
+    return item_and_revenue
   end
 end

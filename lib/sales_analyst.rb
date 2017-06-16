@@ -26,15 +26,18 @@ class SalesAnalyst
   end
 
   def merchants_with_high_item_count
+    x = []
     y = []
     a = item_count_per_merchant
     b = average_items_per_merchant_standard_deviation
     c = average_items_per_merchant
     d = @parent.merchants.contents
-    a.find_all do |k,v|
-      y << d[k] if v > b + c
+    a.each do |k,v|
+      y << k if v > b + c
     end
-    return y
+    y.map do |x|
+      d[x]
+    end
   end
 
   def average_item_price_for_merchant(id)
@@ -135,7 +138,6 @@ class SalesAnalyst
     count.each do |k,v|
       if k == status
         percentage = v / total.to_f * 100
-
       end
     end
     percentage.round(2)
@@ -145,13 +147,20 @@ class SalesAnalyst
     @revenue.revenue_by_date[date]
   end
 
-  def top_revenue_earners(x)
+  def top_revenue_earners(x = nil)
     @revenue.find_earners(x)
+  end
 
+  def merchants_ranked_by_revenue
+    top_revenue_earners(475)
   end
 
   def revenue_by_merchant(merchant_id)
     @revenue.revenue_by_merchant_id[merchant_id]
+  end
+
+  def merchants_with_pending_invoices
+    @revenue.find_merchants_with_unpaid_invoices.compact
   end
 
   def merchants_with_only_one_item
@@ -159,6 +168,22 @@ class SalesAnalyst
     b = count_items_by_merchant(a)
     c = find_associated_merchant_instances(b)
     return c
+  end
+
+  def most_sold_item_for_merchant(merchant_id)
+    a = find_successful_invoices_by_merchant(merchant_id)
+    b = invoice_items_by_invoice(a)
+    c = get_quantity_for_each_invoice_item(b)
+    d = find_best_seller(c)
+    e = return_item_instances(d.keys)
+  end
+
+  def merchants_with_only_one_item_registered_in_month(month)
+    merchants = merchants_with_only_one_item
+    one_registered = merchants.map do |x|
+      x if x.created_at.strftime("%B") == month
+    end.compact
+    return one_registered
   end
 
   def compile_items_by_merchant
@@ -187,6 +212,10 @@ class SalesAnalyst
     @revenue.find_merchant_instances(j)
   end
 
+  def best_item_for_merchant(m_id)
+    @revenue.find_best_item_for_merchant(m_id)
+  end
+
 private
 
   def average_price_per_merchant_standard_deviation
@@ -201,7 +230,7 @@ private
     variance = arr.reduce(0.0) do |sum, element|
       sum + (element - mean)**2
     end / (arr.length - 1)
-    Math.sqrt(variance)
+    a = Math.sqrt(variance)
   end
 
   def item_count_per_merchant
@@ -278,4 +307,33 @@ private
     return counts
   end
 
+  def find_successful_invoices_by_merchant(merchant_id)
+    @parent.invoices.all.map do |inv|
+      inv if inv.is_paid_in_full? == true && inv.merchant_id == merchant_id
+    end.compact
+  end
+
+  def invoice_items_by_invoice(array)
+    array.map do |x|
+      @parent.invoice_items.find_all_by_invoice_id(x.id)
+    end.flatten
+  end
+
+  def get_quantity_for_each_invoice_item(array)
+    final = {}
+    array.each do |x|
+      final[x.item_id] = x.quantity
+    end
+    return final
+  end
+
+  def find_best_seller(hash)
+    hash.select {|k,v| v == hash.values.max}
+  end
+
+  def return_item_instances(array)
+    array.map do |x|
+      @parent.items.find_by_id(x)
+    end
+  end
 end
