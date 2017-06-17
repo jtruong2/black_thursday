@@ -41,7 +41,7 @@ class InvoiceRepository
   end
 
   def find_all_by_status(i_status)
-    contents.values.find_all { |v| v.status == i_status }
+    contents.values.find_all { |v| v.status == i_status.to_sym }
   end
 
   def inspect

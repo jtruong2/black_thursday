@@ -24,12 +24,10 @@ class InvoiceRepositoryTest < Minitest::Test
   end
 
   def test_return_find_all_by_customer_id_good_id
-    skip #need to figure out how to ananlyze the return
     ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
-    actual = ir.find_all_by_customer_id(1)
-    expected =
 
-    assert_equal expected, actual
+    assert_equal 2, ir.find_all_by_customer_id(1).length
+    assert_instance_of Invoice, ir.find_all_by_customer_id(1)[0]
   end
 
   def test_return_find_all_by_customer_id_bad_id
@@ -39,10 +37,10 @@ class InvoiceRepositoryTest < Minitest::Test
   end
 
   def test_find_all_by_merchant_id_good_id
-    skip #need to figure out how to analyze the return
     ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal x, y
+    assert_equal 2, ir.find_all_by_merchant_id(12334208).length
+    assert_instance_of Invoice, ir.find_all_by_merchant_id(12334208)[0]
   end
 
   def test_find_all_by_merchant_id_bad_id
@@ -51,14 +49,28 @@ class InvoiceRepositoryTest < Minitest::Test
     assert_equal [], ir.find_all_by_merchant_id(34)
   end
 
-  def test_find_all_by_status_good_status
-    skip #need to figure out how to analyze the return
+  def test_find_all_by_status_pending
     ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
-    assert_equal [], ir.find_all_by_status("pending")
+    assert_equal 3, ir.find_all_by_status("pending").length
+    assert_instance_of Invoice, ir.find_all_by_status("pending")[0]
   end
 
-  def test_find_all_by_status_bad_status
+  def test_find_all_by_status_shipped
+    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
+
+    assert_equal 4, ir.find_all_by_status("shipped").length
+    assert_instance_of Invoice, ir.find_all_by_status("shipped")[0]
+  end
+
+  def test_find_all_by_status_returned
+    ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
+
+    assert_equal 1, ir.find_all_by_status("returned").length
+    assert_instance_of Invoice, ir.find_all_by_status("returned")[0]
+  end
+
+  def test_find_all_by_status_not_typed_right
     ir = InvoiceRepository.new("./test/data/invoices_fixture.csv", self)
 
     assert_equal [], ir.find_all_by_status("pend")
