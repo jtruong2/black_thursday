@@ -180,10 +180,12 @@ class SalesAnalystTest < Minitest::Test
   end
 
   def test_most_sold_item_for_merchant
-    se = SalesEngine.from_csv(setup)
+    se = SalesEngine.from_csv(setup_full)
     sa = SalesAnalyst.new(se)
+    expected = sa.most_sold_item_for_merchant(12334189)
 
-    assert_nil sa.most_sold_item_for_merchant(12334113)[0]
+    assert_instance_of Item, expected[0]
+    assert expected.map(&:id).include?(263524984)
   end
 
   def test_best_item_for_merchant
